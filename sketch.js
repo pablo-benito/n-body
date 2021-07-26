@@ -2,20 +2,25 @@ let p1;
 let p2;
 let fixedParticle;
 let particleArray = [];
+let starArray = [];
 let n = 200;
 let paused = false;
 let totalMass = 0;
-
+let HEIGHT = 500;
 
 function setup() {
   
-  createCanvas(windowWidth, 500);
+  createCanvas(windowWidth, HEIGHT);
   
   for(let i = 0; i < n; i++) {
-    let p = new Particle(random(1,30));
+    let p = new Particle(random(1,20));
     particleArray.push(p);
 
     totalMass+= p.mass;
+  }
+
+  for(let i = 0; i < 1000; i++) {
+    starArray.push(new Star());
   }
 
 }
@@ -49,20 +54,44 @@ function calculateCOF() {
   });
   cof = cof.div(totalMass, totalMass);
   
-  let factorX = windowWidth/(max(xx)-min(xx)); 
-  let factorY = 500/(max(yy)-min(yy));
-  
-  return {cof, factorX, factorY};
+  let factorX = 0.95*windowWidth/(max(xx)-min(xx)); 
+  let factorY = 0.95*HEIGHT/(max(yy)-min(yy));
+  let factor = max(min(factorX, factorY), 0.4);
+  return {cof, factor, factorX, factorY};
 }
 
+function drawBackground(factor) {
+  push();
+  
+  if (factor < 0.8) {
+    strokeWeight(2);
+  } else {  
+    strokeWeight(1);
+  }
+  for (let i = 0; i < starArray.length; i++) {
+     const star = starArray[i];
+     stroke(star.color);
+     point(star.position);
+    
+  }
+  pop();
+}
 
 function draw() {
+  background(20);
   
-  let {cof, factorX, factorY} = calculateCOF();
+  let {cof, factor, factorX, factorY} = calculateCOF();
+  let center = createVector(windowWidth/2.,HEIGHT/2.);
   
-  translate(windowWidth/2. - cof.x, 250 - cof.y );
+  translate(center.x, center.y);
+  scale(factor);
+  translate(-cof.x, -cof.y);
+  drawBackground(factor);
+  
+  
+  
+  //translate(windowWidth/2. - cof.x, 250 - cof.y );
   //scale(2*factorX, factorY);
-  background(220);
   if (!paused) {
     for(let i = 0; i < particleArray.length; i++) {
       for(let j = 0 ; j < i; j++) {
