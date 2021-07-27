@@ -49,7 +49,7 @@ class Particle {
 
     
     
-    strokeWeight(1);
+    //strokeWeight(1);
     
     colorMode(HSB, 100);
     noFill();

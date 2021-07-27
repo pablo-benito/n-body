@@ -1,16 +1,18 @@
-let p1;
-let p2;
-let fixedParticle;
 let particleArray = [];
 let starArray = [];
 let n = 200;
 let paused = false;
 let totalMass = 0;
 let HEIGHT = 500;
+let xoffset = 0;
+let yoffset = 0;
+let baseZoom = 0;
+let center;
 
 function setup() {
   
-  createCanvas(windowWidth, HEIGHT);
+  var canvas = createCanvas(windowWidth, HEIGHT);
+  canvas.parent('sketch-holder');
   
   for(let i = 0; i < n; i++) {
     let p = new Particle(random(1,20));
@@ -22,6 +24,10 @@ function setup() {
   for(let i = 0; i < 1000; i++) {
     starArray.push(new Star());
   }
+
+  center = createVector(windowWidth/2.,HEIGHT/2.);
+
+  
 
 }
 
@@ -56,18 +62,16 @@ function calculateCOF() {
   
   let factorX = 0.95*windowWidth/(max(xx)-min(xx)); 
   let factorY = 0.95*HEIGHT/(max(yy)-min(yy));
-  let factor = max(min(factorX, factorY), 0.4);
-  return {cof, factor, factorX, factorY};
+  let factor = max(min(factorX, factorY), 0.4) + baseZoom;
+  return {cof, factor};
 }
 
-function drawBackground(factor) {
+function drawBackground() {
+
+  background(20);
+  
   push();
   
-  if (factor < 0.8) {
-    strokeWeight(2);
-  } else {  
-    strokeWeight(1);
-  }
   for (let i = 0; i < starArray.length; i++) {
      const star = starArray[i];
      stroke(star.color);
@@ -78,20 +82,18 @@ function drawBackground(factor) {
 }
 
 function draw() {
-  background(20);
   
-  let {cof, factor, factorX, factorY} = calculateCOF();
-  let center = createVector(windowWidth/2.,HEIGHT/2.);
+  let {cof, factor} = calculateCOF();
   
   translate(center.x, center.y);
   scale(factor);
-  translate(-cof.x, -cof.y);
-  drawBackground(factor);
+  translate(-cof.x-xoffset, -cof.y-yoffset);
+
+  let s = map(factor, 0.4, 2, 2.5, 1);
+  strokeWeight(s);
+ 
+  drawBackground();
   
-  
-  
-  //translate(windowWidth/2. - cof.x, 250 - cof.y );
-  //scale(2*factorX, factorY);
   if (!paused) {
     for(let i = 0; i < particleArray.length; i++) {
       for(let j = 0 ; j < i; j++) {
@@ -108,11 +110,41 @@ function draw() {
     particleArray[i].render();
   }
 
-
 }
 
 function keyPressed() {
   if (key === 'p') {
     paused = !paused ;
+  } 
+
+  if (key === 'ArrowUp') {
+    yoffset += 20;
   }
+
+  if (key === 'ArrowDown') {
+    yoffset -= 20;
+  }
+
+  if (key === 'ArrowLeft') {
+    xoffset -= 50;
+  }
+
+  if (key === 'ArrowRight') {
+    xoffset += 50;
+  }
+ 
+}
+
+function touchMoved(event) {
+
+  xoffset += (pmouseX - mouseX);
+  yoffset += (pmouseY - mouseY);
+  return false;
+
+}
+
+function mouseWheel(event) {
+  
+  baseZoom += event.deltaY/1000; 
+
 }
