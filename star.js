@@ -5,4 +5,9 @@ class Star {
         this.position = createVector(x,y);
         this.color = random(['yellow', 'blue', 'white']);
     }
+
+    render() {
+        stroke(this.color);
+        point(this.position);
+    }
 }

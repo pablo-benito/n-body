@@ -71,12 +71,8 @@ function drawBackground() {
   background(20);
   
   push();
-  
   for (let i = 0; i < starArray.length; i++) {
-     const star = starArray[i];
-     stroke(star.color);
-     point(star.position);
-    
+     starArray[i].render();
   }
   pop();
 }
@@ -89,7 +85,7 @@ function draw() {
   scale(factor);
   translate(-cof.x-xoffset, -cof.y-yoffset);
 
-  let s = map(factor, 0.4, 2, 2.5, 1);
+  let s = map(factor, 0.2, 2, 2.5, 1);
   strokeWeight(s);
  
   drawBackground();
@@ -145,6 +141,7 @@ function touchMoved(event) {
 
 function mouseWheel(event) {
   
-  baseZoom += event.deltaY/1000; 
+  baseZoom += event.deltaY/1000;
+  baseZoom = constrain(baseZoom, -0.2, 0.8);
 
 }
