@@ -2,6 +2,7 @@ let particleArray = [];
 let starArray = [];
 let n = 200;
 let paused = false;
+let backgroundStars = 1200;
 let totalMass = 0;
 let HEIGHT = 500;
 let xoffset = 0;
@@ -21,13 +22,12 @@ function setup() {
     totalMass+= p.mass;
   }
 
-  for(let i = 0; i < 1000; i++) {
+  for(let i = 0; i < backgroundStars; i++) {
     starArray.push(new Star());
   }
 
   center = createVector(windowWidth/2.,HEIGHT/2.);
-
-  
+  colorMode(RGB, 255);
 
 }
 
@@ -100,6 +100,10 @@ function draw() {
       particleArray[i].update();
       
     }
+  }
+
+  for(let i = 0; i < particleArray.length; i++) {
+    particleArray[i].renderPath();
   }
 
   for(let i = 0; i < particleArray.length; i++) {

@@ -1,5 +1,5 @@
 
-let MAX_HISTORY = 400;
+let MAX_HISTORY = 600;
 
 class Particle {
   constructor(mass) {
@@ -43,14 +43,12 @@ class Particle {
     
     this.position = p5.Vector.add(this.position, this.velocity);
   }
-  
-  render() {
+
+  renderPath() {
     if (this.collided) {return;}
 
-    
-    
-    //strokeWeight(1);
-    
+    push();
+
     colorMode(HSB, 100);
     noFill();
     stroke(this.color);
@@ -62,10 +60,19 @@ class Particle {
     }
     endShape();
 
-    colorMode(RGB, 255);
+    pop();
+  }
+  
+  render() {
+    if (this.collided) {return;}
+
+    push();
+  
     stroke(255);
     fill(0);
     circle(this.position.x, this.position.y, this.diameter);
+    
+    pop();
 
   }
 
